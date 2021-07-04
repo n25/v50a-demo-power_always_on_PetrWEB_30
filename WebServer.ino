@@ -61,6 +61,7 @@ String readDHTHumidity() {
 
 String readFlowRate() {  
 f = flowRate;
+return String(f);
 }
 
 
@@ -68,7 +69,6 @@ const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML><html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
-  //<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
   <script src="https://kit.fontawesome.com/09e71aa433.js" crossorigin="anonymous"></script>
   <style>
     html {
@@ -78,11 +78,10 @@ const char index_html[] PROGMEM = R"rawliteral(
      text-align: center;
     }
     h2 { font-size: 3.0rem; }
-    p { font-size: 3.0rem; }
-    .units { font-size: 1.2rem; }
+    p { font-size: 2.2rem; }
+    .units { font-size: 1.7rem; }
     .dht-labels{
-      font-size: 1.5rem;
-      vertical-align:middle;
+      font-size: 1.7rem;
       padding-bottom: 15px;
     }
   </style>
@@ -90,7 +89,7 @@ const char index_html[] PROGMEM = R"rawliteral(
 <body>
   <h2>Čerpadlo chata</h2>
   <p>
-    <i class="fas fa-thermometer-half" style="color:#059e8a;"></i> 
+    <i class="fas fa-thermometer-half" style="color:FireBrick;"></i> 
     <span class="dht-labels">Teplota</span> 
     <span id="temperature">%TEMPERATURE%</span>
     <sup class="units">&deg;C</sup>
@@ -102,10 +101,10 @@ const char index_html[] PROGMEM = R"rawliteral(
     <sup class="units">&percnt;</sup>
   </p>
   <p>
-    <i class="fas fa-fan" style="color:#00add6;"></i> 
+    <i class="fas fa-fan fa-spin" style="color:LightSeaGreen;"></i> 
     <span class="dht-labels">Průtok</span>
     <span id="flow">%FLOWRATE%</span>
-    <sup class="units">litrů</sup>
+    <sup class="units">l/h</sup>
   </p>
   
   
@@ -231,8 +230,8 @@ void WebServer_setup() {
 void WebServer_loop() {
 
     
-    digitalRead(output);
-    Serial.println(output);
+    //digitalRead(output);
+    //Serial.println(output);
 
    
   }
