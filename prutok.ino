@@ -18,7 +18,7 @@ float calibrationFactor = 75.5;
 
 volatile byte pulseCount;  
 
-float flowRate;
+//float flowRate;
 unsigned int flowMilliLitres;
 unsigned long totalMilliLitres;
 

@@ -26,6 +26,8 @@ AsyncWebServer server(80);
 
 
  float t ;
+ float f ;
+ float flowRate ;
 
 String readDHTTemperature() {
   // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
@@ -57,12 +59,17 @@ String readDHTHumidity() {
   }
 }
 
+String readFlowRate() {  
+f = flowRate;
+}
+
 
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML><html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  //<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <script src="https://kit.fontawesome.com/09e71aa433.js" crossorigin="anonymous"></script>
   <style>
     html {
      font-family: Arial;
@@ -94,6 +101,14 @@ const char index_html[] PROGMEM = R"rawliteral(
     <span id="humidity">%HUMIDITY%</span>
     <sup class="units">&percnt;</sup>
   </p>
+  <p>
+    <i class="fas fa-fan" style="color:#00add6;"></i> 
+    <span class="dht-labels">Průtok</span>
+    <span id="flow">%FLOWRATE%</span>
+    <sup class="units">litrů</sup>
+  </p>
+  
+  
 
 <!--ruční zapínání čerpadla-->
   <p>
@@ -133,6 +148,18 @@ setInterval(function ( ) {
   xhttp.send();
 }, 10000 ) ;
 
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("flowrate").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "/flowrate", true);
+  xhttp.send();
+}, 10000 ) ;
+
+
 </script>
 </html>)rawliteral"; 
 
@@ -144,6 +171,9 @@ String processor(const String& var){
   }
   else if(var == "HUMIDITY"){
     return readDHTHumidity();
+  }
+  else if (var == "FLOWRATE") {     
+    return readFlowRate();         
   }
   
   return String();
@@ -172,6 +202,10 @@ void WebServer_setup() {
   server.on("/humidity", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/plain", readDHTHumidity().c_str());
   });
+  server.on("/flowrate", HTTP_GET, [](AsyncWebServerRequest * request) {   
+    request->send_P(200, "text/plain", readFlowRate().c_str());     
+  });
+
 
 
   // Receive an HTTP GET request
@@ -194,14 +228,11 @@ void WebServer_setup() {
   }
 
 
-
-  
-
 void WebServer_loop() {
 
     
-    digitalRead( output );
-    Serial.println( output );
+    digitalRead(output);
+    Serial.println(output);
 
    
   }
