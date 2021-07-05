@@ -3,7 +3,6 @@
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
 #include <AsyncTCP.h>
-//#include "AppConfig.h"
 
 // Replace with your network credentials
 //const char* ssid = "DUCT";
@@ -25,7 +24,11 @@ DHT dht(DHTPIN, DHTTYPE);
 AsyncWebServer server(80);
 
 
- float t ;
+ //float t ;
+ float f;
+ float tl;
+ float flowRate;
+ unsigned long totalLitres;
 
 String readDHTTemperature() {
   // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
@@ -57,12 +60,21 @@ String readDHTHumidity() {
   }
 }
 
+String readFlowRate() {  
+f = flowRate;
+return String(f);
+}
+
+String readTotalLitres() {  
+tl = totalLitres;
+return String(tl);
+}
 
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML><html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <script src="https://kit.fontawesome.com/09e71aa433.js" crossorigin="anonymous"></script>
   <style>
     html {
      font-family: Arial;
@@ -71,11 +83,10 @@ const char index_html[] PROGMEM = R"rawliteral(
      text-align: center;
     }
     h2 { font-size: 3.0rem; }
-    p { font-size: 3.0rem; }
-    .units { font-size: 1.2rem; }
+    p { font-size: 2.2rem; }
+    .units { font-size: 1.7rem; }
     .dht-labels{
-      font-size: 1.5rem;
-      vertical-align:middle;
+      font-size: 1.7rem;
       padding-bottom: 15px;
     }
   </style>
@@ -83,17 +94,31 @@ const char index_html[] PROGMEM = R"rawliteral(
 <body>
   <h2>Čerpadlo chata</h2>
   <p>
-    <i class="fas fa-thermometer-half" style="color:#059e8a;"></i> 
-    <span class="dht-labels">Teplota</span> 
+    <i class="fas fa-thermometer-half" style="color:FireBrick;"></i> 
+    <span class="dht-labels">Teplota:</span> 
     <span id="temperature">%TEMPERATURE%</span>
     <sup class="units">&deg;C</sup>
   </p>
   <p>
     <i class="fas fa-tint" style="color:#00add6;"></i> 
-    <span class="dht-labels">Vlhkost</span>
+    <span class="dht-labels">Vlhkost:</span>
     <span id="humidity">%HUMIDITY%</span>
     <sup class="units">&percnt;</sup>
   </p>
+  <p>
+    <i class="fas fa-fan fa-spin" style="color:MediumSpringGreen;"></i> 
+    <span class="dht-labels">Průtok:</span>
+    <span id="flowrate">%FLOWRATE%</span>
+    <sup class="units">l/h</sup>
+  </p>
+  <p>
+    <i class="fas fa-fill-drip" style="color:CornflowerBlue;"></i> 
+    <span class="dht-labels">Celkem načerpáno:</span>
+    <span id="totallitres">%TOTALLITRES%</span>
+    <sup class="units">litrů</sup>
+  </p>
+  
+  
 
 <!--ruční zapínání čerpadla-->
   <p>
@@ -133,6 +158,28 @@ setInterval(function ( ) {
   xhttp.send();
 }, 10000 ) ;
 
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("flowrate").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "/flowrate", true);
+  xhttp.send();
+}, 10000 ) ;
+
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("totallitres").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "/totallitres", true);
+  xhttp.send();
+}, 10000 ) ;
+
 </script>
 </html>)rawliteral"; 
 
@@ -144,6 +191,12 @@ String processor(const String& var){
   }
   else if(var == "HUMIDITY"){
     return readDHTHumidity();
+  }
+  else if (var == "FLOWRATE") {     
+    return readFlowRate();         
+  }
+  else if (var == "TOTALLITRES") {     
+    return readTotalLitres();         
   }
   
   return String();
@@ -172,6 +225,13 @@ void WebServer_setup() {
   server.on("/humidity", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/plain", readDHTHumidity().c_str());
   });
+  server.on("/flowrate", HTTP_GET, [](AsyncWebServerRequest * request) {   
+    request->send_P(200, "text/plain", readFlowRate().c_str());     
+  });
+  server.on("/totallitres", HTTP_GET, [](AsyncWebServerRequest * request) {   
+    request->send_P(200, "text/plain", readTotalLitres().c_str());     
+  });
+
 
 
   // Receive an HTTP GET request
@@ -194,14 +254,11 @@ void WebServer_setup() {
   }
 
 
-
-  
-
 void WebServer_loop() {
 
     
-    digitalRead( output );
-    Serial.println( output );
+    //digitalRead(output);
+    //Serial.println(output);
 
    
   }
