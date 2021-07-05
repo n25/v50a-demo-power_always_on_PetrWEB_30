@@ -103,7 +103,7 @@ const char index_html[] PROGMEM = R"rawliteral(
   <p>
     <i class="fas fa-fan fa-spin" style="color:LightSeaGreen;"></i> 
     <span class="dht-labels">Průtok</span>
-    <span id="flow">%FLOWRATE%</span>
+    <span id="flowrate">%FLOWRATE%</span>
     <sup class="units">l/h</sup>
   </p>
   
