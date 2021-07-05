@@ -46,6 +46,7 @@ void prutok_setup()
   flowRate          = 0.0;
   flowMilliLitres   = 0;
   totalMilliLitres  = 0;
+  totalLitres       = 0;
   oldTime           = 0;
 
   // The Hall-effect sensor is connected to pin 2 which uses interrupt 0.
@@ -86,6 +87,8 @@ void prutok_loop()
     
     // Add the millilitres passed in this second to the cumulative total
     totalMilliLitres += flowMilliLitres;
+
+    totalLitres = totalMilliLitres / 1000;
       
     unsigned int frac;
     
@@ -99,7 +102,7 @@ void prutok_loop()
     Serial.print("Output Liquid Quantity: ");        
     Serial.print(totalMilliLitres);
     Serial.println("mL"); 
-   // Serial.print("\t");       // Print tab space
+    Serial.print("\t");       // Print tab space
     Serial.print(totalMilliLitres/1000);
     Serial.print("L");
     

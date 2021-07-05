@@ -3,7 +3,6 @@
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
 #include <AsyncTCP.h>
-//#include "AppConfig.h"
 
 // Replace with your network credentials
 //const char* ssid = "DUCT";
@@ -25,9 +24,11 @@ DHT dht(DHTPIN, DHTTYPE);
 AsyncWebServer server(80);
 
 
- float t ;
+ //float t ;
  float f ;
+ float tl;
  float flowRate ;
+ unsigned long totalLitres;
 
 String readDHTTemperature() {
   // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
@@ -64,6 +65,10 @@ f = flowRate;
 return String(f);
 }
 
+String readTotalLitres() {  
+tl = totalLitres;
+return String(tl);
+}
 
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML><html>
@@ -90,21 +95,27 @@ const char index_html[] PROGMEM = R"rawliteral(
   <h2>Čerpadlo chata</h2>
   <p>
     <i class="fas fa-thermometer-half" style="color:FireBrick;"></i> 
-    <span class="dht-labels">Teplota</span> 
+    <span class="dht-labels">Teplota:</span> 
     <span id="temperature">%TEMPERATURE%</span>
     <sup class="units">&deg;C</sup>
   </p>
   <p>
     <i class="fas fa-tint" style="color:#00add6;"></i> 
-    <span class="dht-labels">Vlhkost</span>
+    <span class="dht-labels">Vlhkost:</span>
     <span id="humidity">%HUMIDITY%</span>
     <sup class="units">&percnt;</sup>
   </p>
   <p>
-    <i class="fas fa-fan fa-spin" style="color:LightSeaGreen;"></i> 
-    <span class="dht-labels">Průtok</span>
+    <i class="fas fa-fan fa-spin" style="color:MediumSpringGreen;"></i> 
+    <span class="dht-labels">Průtok:</span>
     <span id="flowrate">%FLOWRATE%</span>
     <sup class="units">l/h</sup>
+  </p>
+  <p>
+    <i class="fas fa-fill-drip" style="color:CornflowerBlue;"></i> 
+    <span class="dht-labels">Celkem načerpáno:</span>
+    <span id="totallitres">%TOTALLITRES%</span>
+    <sup class="units">litrů</sup>
   </p>
   
   
@@ -158,6 +169,16 @@ setInterval(function ( ) {
   xhttp.send();
 }, 10000 ) ;
 
+setInterval(function ( ) {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("totallitres").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "/totallitres", true);
+  xhttp.send();
+}, 10000 ) ;
 
 </script>
 </html>)rawliteral"; 
@@ -173,6 +194,9 @@ String processor(const String& var){
   }
   else if (var == "FLOWRATE") {     
     return readFlowRate();         
+  }
+  else if (var == "TOTALLITRES") {     
+    return readTotalLitres();         
   }
   
   return String();
@@ -203,6 +227,9 @@ void WebServer_setup() {
   });
   server.on("/flowrate", HTTP_GET, [](AsyncWebServerRequest * request) {   
     request->send_P(200, "text/plain", readFlowRate().c_str());     
+  });
+  server.on("/totalmillilitres", HTTP_GET, [](AsyncWebServerRequest * request) {   
+    request->send_P(200, "text/plain", readTotalLitres().c_str());     
   });
 
 
