@@ -87,9 +87,10 @@ void prutok_loop()
     
     // Add the millilitres passed in this second to the cumulative total
     totalMilliLitres += flowMilliLitres;
-
-    totalLitres += flowMilliLitres / 1000;
+    
+    totalLitres = totalMilliLitres / 1000;
       
+    
     unsigned int frac;
     
     // Print the flow rate for this second in litres / minute
@@ -102,9 +103,10 @@ void prutok_loop()
     Serial.print("Output Liquid Quantity: ");        
     Serial.print(totalMilliLitres);
     Serial.println("mL"); 
-    Serial.print("\t");       // Print tab space
-    Serial.print(totalMilliLitres/1000);
-    Serial.print("L");
+    Serial.print("\t");      // Print tab space
+    Serial.print("Output litrů: ");
+    Serial.print(totalLitres);
+    Serial.println("L");
     
 
     // Reset the pulse counter so we can start incrementing again

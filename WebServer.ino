@@ -25,9 +25,9 @@ AsyncWebServer server(80);
 
 
  //float t ;
- float f ;
+ float f;
  float tl;
- float flowRate ;
+ float flowRate;
  unsigned long totalLitres;
 
 String readDHTTemperature() {
