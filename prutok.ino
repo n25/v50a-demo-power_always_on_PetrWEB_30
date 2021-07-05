@@ -88,7 +88,7 @@ void prutok_loop()
     // Add the millilitres passed in this second to the cumulative total
     totalMilliLitres += flowMilliLitres;
 
-    totalLitres = totalMilliLitres / 1000;
+    totalLitres += flowMilliLitres / 1000;
       
     unsigned int frac;
     

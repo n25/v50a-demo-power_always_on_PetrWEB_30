@@ -228,7 +228,7 @@ void WebServer_setup() {
   server.on("/flowrate", HTTP_GET, [](AsyncWebServerRequest * request) {   
     request->send_P(200, "text/plain", readFlowRate().c_str());     
   });
-  server.on("/totalmillilitres", HTTP_GET, [](AsyncWebServerRequest * request) {   
+  server.on("/totallitres", HTTP_GET, [](AsyncWebServerRequest * request) {   
     request->send_P(200, "text/plain", readTotalLitres().c_str());     
   });
 
