@@ -4,12 +4,6 @@
 #include <DHT.h>
 #include <AsyncTCP.h>
 
-// Replace with your network credentials
-//const char* ssid = "DUCT";
-//const char* password = "rour@25#";
-
-//pin4 na zapinaní čerpadla
-const int output = 23;
 
 #define DHTPIN 27     // Digital pin connected to the DHT sensor
 
@@ -24,7 +18,6 @@ DHT dht(DHTPIN, DHTTYPE);
 AsyncWebServer server(80);
 
 
- //float t ;
  float f;
  float tl;
  float flowRate;
@@ -109,7 +102,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     <i class="fas fa-fan fa-spin" style="color:MediumSpringGreen;"></i> 
     <span class="dht-labels">Průtok:</span>
     <span id="flowrate">%FLOWRATE%</span>
-    <sup class="units">l/h</sup>
+    <sup class="units">l/m</sup>
   </p>
   <p>
     <i class="fas fa-fill-drip" style="color:CornflowerBlue;"></i> 
@@ -212,8 +205,9 @@ void WebServer_setup() {
 
  dht.begin();
 
-   pinMode(output, OUTPUT);
-  digitalWrite(output, LOW); 
+// pinMode(cerpadlo_motor, OUTPUT);
+// digitalWrite(cerpadlo_motor, LOW);
+ 
 
   // Route for root / web page
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -236,16 +230,16 @@ void WebServer_setup() {
 
   // Receive an HTTP GET request
   server.on("/on", HTTP_GET, [] (AsyncWebServerRequest *request) {
-    digitalWrite(output, HIGH);
+    digitalWrite(cerpadlo_motor, HIGH);
     request->send(200, "text/plain", "ok");
-    Serial.println("tlačítko zapnuto");
+    Serial.println("čerpadlo zapnuto");
   });
 
  // Receive an HTTP GET request
   server.on("/off", HTTP_GET, [] (AsyncWebServerRequest *request) {
-    digitalWrite(output, LOW);
+    digitalWrite(cerpadlo_motor, LOW);
     request->send(200, "text/plain", "ok");
-    Serial.println("tlačítko vypnuto");
+    Serial.println("čerpadlo vypnuto");
   });
 
   // Start server
@@ -255,10 +249,6 @@ void WebServer_setup() {
 
 
 void WebServer_loop() {
-
-    
-    //digitalRead(output);
-    //Serial.println(output);
 
    
   }
