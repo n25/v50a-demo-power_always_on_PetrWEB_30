@@ -27,7 +27,11 @@ void Cerpadlo_loop() {
     // zapneme napájecí napětí pro modul s krátkou pauzou
     // pro ustálení
     digitalWrite(vccPin, HIGH);
+<<<<<<< HEAD
     delay(200);
+=======
+    delay(200); // delay se pokuž možno vyhni, zastaví celý procesor a nic nedělá
+>>>>>>> 0b9c47b5d8f8a02fedcce397a8ac25f5f77a4d75
     // načtení digitální hodnoty do proměnných
     hladinoMerStav = digitalRead(hladinoMer);
     // ukončení řádku na sériové lince
@@ -44,7 +48,11 @@ void Cerpadlo_loop() {
     Serial.println("nízká hladina, čerpadlo vypínám");
     Serial.println();
   } else {
+<<<<<<< HEAD
     
+=======
+    delay(60000); // to samé 60s se nebude nic dít, proč to tu máš
+>>>>>>> 0b9c47b5d8f8a02fedcce397a8ac25f5f77a4d75
     digitalWrite(cerpadlo_motor, HIGH);
     Serial.println();
     Serial.println("čerpadlo zapínám");
@@ -56,7 +64,11 @@ void Cerpadlo_loop() {
   if (cerpadloStav == HIGH) {
     //napiš na display a na web čerpadlo běží
     Serial.println("čerpadlo běží-on");
+<<<<<<< HEAD
     
+=======
+    delay (20000); // a zase čekáme a hovno děláme :D
+>>>>>>> 0b9c47b5d8f8a02fedcce397a8ac25f5f77a4d75
     
     }
 
